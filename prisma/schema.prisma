@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:12345@localhost:3306/dbBarbeiro"
+}
+
+//? Tabelas
+model Pessoa {
+  id Int @id @default(autoincrement())
+  nome String
+  cpf String @unique
+  telefone String
+  email String
+  senha String
+  Agendamento Agendamento[]
+}
+
+model Barbeiro {
+  id Int @id @default(autoincrement())
+  nome String
+  cpf String @unique
+  telefone String
+  email String
+  senha String
+  idEstabelecimento Int            // Supondo que idEstabelecimento é uma FK para a tabela Estabelecimento
+  diasTrabalho String
+  horarios String
+  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
+  Agendamento Agendamento[]
+}
+
+model Estabelecimento {
+  id Int @id @default(autoincrement())
+  nome String
+  email String    @unique
+  cnpj String    @unique
+  Barbeiros Barbeiro[]
+  Produtos Produto[]
+  Servico Servico[]
+  Agendamento Agendamento[]
+}
+
+model Produto {
+  id Int @id @default(autoincrement())
+  nome String
+  detalhes String
+  preco Decimal
+  foto String
+  idEstabelecimento Int
+  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
+  AgendamentoProduto AgendamentoProduto[]
+}
+
+model Servico {
+  id Int @id @default(autoincrement())
+  nome String
+  detalhes String
+  preco Decimal
+  duracao DateTime
+  idEstabelecimento Int
+  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
+  AgendamentoServico AgendamentoServico[]
+}
+
+model Agendamento {
+  id Int @id @default(autoincrement())
+  dia DateTime
+  horario DateTime
+  idEstabelecimento Int
+  idBarbeiro Int
+  idPessoa Int
+  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
+  Barbeiro Barbeiro @relation(fields: [idBarbeiro], references: [id])
+  Pessoa Pessoa @relation(fields: [idPessoa], references: [id])
+  AgendamentoProduto AgendamentoProduto[]
+  AgendamentoServico AgendamentoServico[]
+}
+
+model AgendamentoProduto {
+  id Int @id @default(autoincrement())
+  idProduto Int
+  idAgendamento Int
+  Produto Produto @relation(fields: [idProduto], references: [id])
+  Agendamento Agendamento @relation(fields: [idAgendamento], references: [id])
+}
+
+model AgendamentoServico {
+  id Int @id @default(autoincrement())
+  idServico Int
+  idAgendamento Int
+  Servico Servico @relation(fields: [idServico], references: [id])
+  Agendamento Agendamento @relation(fields: [idAgendamento], references: [id])
+}
