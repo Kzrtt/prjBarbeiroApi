@@ -3,7 +3,7 @@ import { validations } from "../utils/validationMethods"
 
 const prisma = new PrismaClient()
 
-export const estabelecimentoController = {
+export const establishmentController = {
     async insertEstablishment({ body }) {
         let response = {
             "status": false,
@@ -22,6 +22,13 @@ export const estabelecimentoController = {
                     nome: body['name'],
                     cnpj: body['cnpj'],
                     email: body['email'],
+                    telefone: body['phone'],
+                    rua: body['street'],
+                    bairro: body['neighborhood'],
+                    complemento: body['complement'],
+                    cidade: body['city'],
+                    uf: body['state'],
+                    numero: body['number']
                 }
             })
             response['status'] = true,

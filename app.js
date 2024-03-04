@@ -1,13 +1,13 @@
 import { Elysia } from 'elysia';
-import pessoaRoutes from './src/routes/pessoaRoutes';
-import barbeiroRoutes from './src/routes/barbeiroRoutes';
-import estabelecimentoRoutes from './src/routes/estabelecimentoRoutes';
+import personRoutes from './src/routes/personRoutes';
+import barberRoutes from './src/routes/barberRoutes';
+import establishmentRoutes from './src/routes/establishmentRoutes';
 
 const app = new Elysia();
 
 // Use as rotas de pessoa
-pessoaRoutes(app)
-barbeiroRoutes(app)
-estabelecimentoRoutes(app)
+personRoutes(app)
+barberRoutes(app)
+establishmentRoutes(app)
 
 export { app };

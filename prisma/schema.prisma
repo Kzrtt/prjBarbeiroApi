@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,90 +7,104 @@ datasource db {
   url      = "mysql://root:12345@localhost:3306/dbBarbeiro"
 }
 
-//? Tabelas
-model Pessoa {
-  id Int @id @default(autoincrement())
-  nome String
-  cpf String @unique
-  telefone String
-  email String
-  senha String
-  Agendamento Agendamento[]
-}
-
-model Barbeiro {
-  id Int @id @default(autoincrement())
-  nome String
-  cpf String @unique
-  telefone String
-  email String
-  senha String
-  idEstabelecimento Int            // Supondo que idEstabelecimento é uma FK para a tabela Estabelecimento
-  diasTrabalho String
-  horarios String
-  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
-  Agendamento Agendamento[]
-}
-
-model Estabelecimento {
-  id Int @id @default(autoincrement())
-  nome String
-  email String    @unique
-  cnpj String    @unique
-  Barbeiros Barbeiro[]
-  Produtos Produto[]
-  Servico Servico[]
-  Agendamento Agendamento[]
-}
-
-model Produto {
-  id Int @id @default(autoincrement())
-  nome String
-  detalhes String
-  preco Decimal
-  foto String
+model agendamento {
+  id                Int      @id @default(autoincrement())
+  dia               DateTime
+  horario           DateTime
   idEstabelecimento Int
-  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
-  AgendamentoProduto AgendamentoProduto[]
+  idBarbeiro        Int
+  idPessoa          Int
+  status            Boolean
+
+  @@index([idBarbeiro], map: "Agendamento_idBarbeiro_fkey")
+  @@index([idEstabelecimento], map: "Agendamento_idEstabelecimento_fkey")
+  @@index([idPessoa], map: "Agendamento_idPessoa_fkey")
 }
 
-model Servico {
-  id Int @id @default(autoincrement())
-  nome String
-  detalhes String
-  preco Decimal
-  duracao DateTime
-  idEstabelecimento Int
-  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
-  AgendamentoServico AgendamentoServico[]
-}
-
-model Agendamento {
-  id Int @id @default(autoincrement())
-  dia DateTime
-  horario DateTime
-  idEstabelecimento Int
-  idBarbeiro Int
-  idPessoa Int
-  Estabelecimento Estabelecimento @relation(fields: [idEstabelecimento], references: [id])
-  Barbeiro Barbeiro @relation(fields: [idBarbeiro], references: [id])
-  Pessoa Pessoa @relation(fields: [idPessoa], references: [id])
-  AgendamentoProduto AgendamentoProduto[]
-  AgendamentoServico AgendamentoServico[]
-}
-
-model AgendamentoProduto {
-  id Int @id @default(autoincrement())
-  idProduto Int
+model agendamentoproduto {
+  id            Int @id @default(autoincrement())
+  idProduto     Int
   idAgendamento Int
-  Produto Produto @relation(fields: [idProduto], references: [id])
-  Agendamento Agendamento @relation(fields: [idAgendamento], references: [id])
+  quantidade    Int
+
+  @@index([idAgendamento], map: "AgendamentoProduto_idAgendamento_fkey")
+  @@index([idProduto], map: "AgendamentoProduto_idProduto_fkey")
 }
 
-model AgendamentoServico {
-  id Int @id @default(autoincrement())
-  idServico Int
+model agendamentoservico {
+  id            Int @id @default(autoincrement())
+  idServico     Int
   idAgendamento Int
-  Servico Servico @relation(fields: [idServico], references: [id])
-  Agendamento Agendamento @relation(fields: [idAgendamento], references: [id])
+
+  @@index([idAgendamento], map: "AgendamentoServico_idAgendamento_fkey")
+  @@index([idServico], map: "AgendamentoServico_idServico_fkey")
+}
+
+model barbeiro {
+  id                Int    @id @default(autoincrement())
+  idEstabelecimento Int
+  horaFim           String
+  horaInicio        String
+  idPessoa          Int    @unique
+  Pessoa pessoa @relation(fields: [idPessoa], references: [id])
+  DiasTrabalho diastrabalho[]
+
+  @@index([idEstabelecimento], map: "Barbeiro_idEstabelecimento_fkey")
+}
+
+model diastrabalho {
+  id         Int @id @default(autoincrement())
+  idBarbeiro Int 
+  diaSemana  Int
+  Barbeiro barbeiro @relation(fields: [idBarbeiro], references: [id])
+
+  @@index([idBarbeiro], map: "Barbeiro_idBarbeiro_fkey")
+}
+
+model estabelecimento {
+  id          Int    @id @default(autoincrement())
+  nome        String
+  email       String @unique(map: "Estabelecimento_email_key")
+  cnpj        String @unique(map: "Estabelecimento_cnpj_key")
+  bairro      String
+  cidade      String
+  complemento String
+  numero      String
+  rua         String
+  telefone    String
+  uf          String
+}
+
+model pessoa {
+  id       Int     @id @default(autoincrement())
+  nome     String
+  cpf      String  @unique(map: "Pessoa_cpf_key")
+  telefone String
+  email    String  @unique(map: "Pessoa_email_key")
+  senha    String
+  isBarber Boolean
+
+  Barber barbeiro?
+}
+
+model produto {
+  id                Int     @id @default(autoincrement())
+  nome              String
+  detalhes          String
+  preco             Decimal
+  foto              String
+  idEstabelecimento Int
+
+  @@index([idEstabelecimento], map: "Produto_idEstabelecimento_fkey")
+}
+
+model servico {
+  id                Int      @id @default(autoincrement())
+  nome              String
+  detalhes          String
+  preco             Decimal
+  duracao           DateTime
+  idEstabelecimento Int
+
+  @@index([idEstabelecimento], map: "Servico_idEstabelecimento_fkey")
 }

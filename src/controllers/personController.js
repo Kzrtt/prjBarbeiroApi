@@ -20,7 +20,7 @@ function validate(criptedToken) {
     return result.lenght !== 0
 }
 
-export const pessoaController = {
+export const personController = {
     //? Fazer método para listar agendamentos primeiro, para depois verificar se não existe um 
     //? agendamento aberto antes de tentar deletar a pessoas
     async deleteAccount({ body }) {
@@ -127,6 +127,7 @@ export const pessoaController = {
                     telefone: body['phone'],
                     email: body['email'],
                     senha: body['password'],
+                    isBarber: false,
                 }
             })
             response['status'] = true,
