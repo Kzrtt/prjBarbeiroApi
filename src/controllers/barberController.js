@@ -4,6 +4,22 @@ import { utilsMethods } from "../utils/utilsMethods"
 const prisma = new PrismaClient()
 
 export const barberController = {
+    async listPossibleHours({ body }) {
+        let response = {
+            "status": false,
+            "data": {},
+            "message": ""
+        }
+
+        //? Buscar o dia, verificar se existem agendamentos
+        const getDay = await prisma.agendamento.findMany({})
+
+        //? caso existam remover os horários relativos ao agendamento
+        //? pedir na requisição o serviço que será realizado para saber quais horários podem ser oferecidos para o cliente
+        //? caso não tenha agendamento disponivel retornar horários com intervalo de tempo entre si com a duração dos serviços
+        //? desejados
+    },
+
     async listBarbers({ params: { id } }) {
         let response = {
             "status": false,

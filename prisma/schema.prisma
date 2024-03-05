@@ -9,12 +9,13 @@ datasource db {
 
 model agendamento {
   id                Int      @id @default(autoincrement())
-  dia               DateTime
   horario           DateTime
   idEstabelecimento Int
   idBarbeiro        Int
   idPessoa          Int
-  status            Boolean
+  status            String
+  AgendamentoProduto agendamentoproduto[]
+  AgendamentoServico agendamentoservico[]
 
   @@index([idBarbeiro], map: "Agendamento_idBarbeiro_fkey")
   @@index([idEstabelecimento], map: "Agendamento_idEstabelecimento_fkey")
@@ -26,6 +27,8 @@ model agendamentoproduto {
   idProduto     Int
   idAgendamento Int
   quantidade    Int
+  Produto produto @relation(fields: [idProduto], references: [id])
+  Agendamento agendamento @relation(fields: [idAgendamento], references: [id])
 
   @@index([idAgendamento], map: "AgendamentoProduto_idAgendamento_fkey")
   @@index([idProduto], map: "AgendamentoProduto_idProduto_fkey")
@@ -35,6 +38,8 @@ model agendamentoservico {
   id            Int @id @default(autoincrement())
   idServico     Int
   idAgendamento Int
+  Servico servico @relation(fields: [idServico], references: [id])
+  Agendamento agendamento @relation(fields: [idAgendamento], references: [id])
 
   @@index([idAgendamento], map: "AgendamentoServico_idAgendamento_fkey")
   @@index([idServico], map: "AgendamentoServico_idServico_fkey")
@@ -94,6 +99,7 @@ model produto {
   preco             Decimal
   foto              String
   idEstabelecimento Int
+  AgendamentoProduto agendamentoproduto[]
 
   @@index([idEstabelecimento], map: "Produto_idEstabelecimento_fkey")
 }
@@ -103,8 +109,9 @@ model servico {
   nome              String
   detalhes          String
   preco             Decimal
-  duracao           DateTime
+  duracao           String
   idEstabelecimento Int
+  AgendamentoServico agendamentoservico[]
 
   @@index([idEstabelecimento], map: "Servico_idEstabelecimento_fkey")
 }
