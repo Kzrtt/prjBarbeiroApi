@@ -10,6 +10,7 @@ datasource db {
 model agendamento {
   id                Int      @id @default(autoincrement())
   horario           DateTime
+  dia               DateTime
   idEstabelecimento Int
   idBarbeiro        Int
   idPessoa          Int

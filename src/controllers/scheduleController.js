@@ -13,6 +13,7 @@ export const scheduleController = {
         const schedule = await prisma.agendamento.create({
             data: {
                 horario: body['hour'],
+                dia: body['day'],
                 idEstabelecimento: body['establishmentId'],
                 idPessoa: body['personId'],
                 idBarbeiro: body['barberId'],
